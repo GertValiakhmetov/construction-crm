@@ -1,56 +1,8 @@
-import type { EditTaskInput, NewObjectInput, Profile, SiteObject, Task } from '@crm/contracts'
+import type { EditTaskInput, Profile, SiteObject, Task } from '@crm/contracts'
 import { Button, NativeSelect, Textarea, TextInput } from '@mantine/core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { FormEvent } from 'react'
-import type { Api } from './api'
-
-function formValues(event: FormEvent<HTMLFormElement>) {
-  event.preventDefault()
-  const values = new FormData(event.currentTarget)
-  return (name: string) => String(values.get(name) ?? '').trim()
-}
-
-export function ObjectForm({
-  site,
-  save,
-  pending,
-  error,
-}: {
-  site?: SiteObject
-  save: (value: NewObjectInput) => void
-  pending: boolean
-  error: Error | null
-}) {
-  return (
-    <form
-      className="entry-form"
-      onSubmit={(event) => {
-        const value = formValues(event)
-        save({ name: value('name'), address: value('address') })
-      }}
-    >
-      <TextInput
-        label="Название"
-        name="name"
-        defaultValue={site?.name}
-        required
-        pattern=".*\S.*"
-        data-autofocus
-      />
-      <TextInput
-        label="Адрес"
-        name="address"
-        defaultValue={site?.address}
-        required
-        pattern=".*\S.*"
-      />
-      {error && <p role="alert">{error.message}</p>}
-      <Button type="submit" loading={pending}>
-        {site ? 'Сохранить' : 'Создать объект'}
-      </Button>
-    </form>
-  )
-}
+import type { Api } from '../../shared/api'
+import { formValues } from '../../shared/formValues'
 
 export function TaskForm({
   api,
@@ -64,15 +16,18 @@ export function TaskForm({
   onCreated: () => void
 }) {
   const cache = useQueryClient()
+
   const executors = useQuery({
     queryKey: ['executors'],
     queryFn: () => api<Pick<Profile, 'id' | 'display_name'>[]>('/executors'),
   })
+
   const sites = useQuery({
     queryKey: ['objects'],
     queryFn: () => api<SiteObject[]>('/objects'),
     enabled: !!task,
   })
+
   const create = useMutation({
     mutationFn: (input: EditTaskInput) => {
       if (task) return api(`/tasks/${task.id}`, input, 'PUT')
@@ -87,6 +42,7 @@ export function TaskForm({
       onCreated()
     },
   })
+
   return (
     <form
       className="entry-form"

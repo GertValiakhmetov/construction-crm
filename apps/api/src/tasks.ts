@@ -7,6 +7,8 @@ import {
   type NewObjectInput,
   NewTask,
   type NewTaskInput,
+  ProfileResponse,
+  Role,
   TaskParams,
   Transition,
   type TransitionInput,
@@ -135,7 +137,7 @@ export function taskRoutes(app: FastifyInstance) {
     const result = await caller(req)
       .from('profiles')
       .select('id,display_name')
-      .eq('role', 'executor')
+      .eq('role', Role.Executor)
       .order('display_name')
     check(result.error, result.status)
     return result.data
@@ -175,7 +177,7 @@ export function taskRoutes(app: FastifyInstance) {
       return reply.code(201).send(result.data)
     },
   )
-  app.get('/api/me', async (req) => {
+  app.get('/api/me', { schema: { response: { 200: ProfileResponse } } }, async (req) => {
     const db = caller(req)
     const { data, error } = await db.auth.getUser(req.headers.authorization?.slice(7))
     if (error || !data.user) fail(401, 'Войдите в аккаунт')
