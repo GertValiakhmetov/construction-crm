@@ -6,11 +6,15 @@
     "node": ">=22.9.0"
   },
   "scripts": {
+    "format": "biome format --write .",
+    "lint": "biome lint --error-on-warnings .",
+    "check": "biome ci --error-on-warnings . && pnpm typecheck",
     "dev": "pnpm --filter @crm/contracts build && pnpm -r --parallel --stream dev",
     "build": "pnpm -r build",
     "typecheck": "pnpm --filter @crm/contracts build && pnpm -r typecheck"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.6.5",
     "supabase": "3.0.0"
   }
 }
