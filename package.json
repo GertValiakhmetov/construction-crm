@@ -1,0 +1,16 @@
+{
+  "name": "construction-crm",
+  "private": true,
+  "packageManager": "pnpm@9.10.0",
+  "engines": {
+    "node": ">=22.9.0"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @crm/contracts build && pnpm -r --parallel --stream dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm --filter @crm/contracts build && pnpm -r typecheck"
+  },
+  "devDependencies": {
+    "supabase": "3.0.0"
+  }
+}
